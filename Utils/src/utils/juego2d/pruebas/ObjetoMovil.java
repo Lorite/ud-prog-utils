@@ -226,8 +226,8 @@ public abstract class ObjetoMovil {
 	public void mueveUnPoco( VentanaGrafica v, double miliSgs, boolean dibujar, Point2D aceleracion ) {
 		// 1. Cálculos previos
 		Point2D miAceleracion = (aceleracion==null) 
-			? new Point2D.Double( 0.0, Fisica.GRAVEDAD ) 
-			: new Point2D.Double( aceleracion.getX(), aceleracion.getY() + Fisica.GRAVEDAD );
+			? new Point2D.Double( 0.0, Fisica.getGravedad() ) 
+			: new Point2D.Double( aceleracion.getX(), aceleracion.getY() + Fisica.getGravedad() );
 		velYInicial = velocidadY;  // Guardamos datos para posibles correcciones
 		velXInicial = velocidadX;
 		antY = y;
@@ -333,6 +333,11 @@ public abstract class ObjetoMovil {
 	 * @return	Devuelve null si no chocan, un vector con forma de punto indicando el ángulo y amplitud del choque sobre el objeto en curso
 	 */
 	public abstract Point chocaConObjeto( ObjetoMovil objeto2 );
+	
+	/** Indica si el objeto rebota
+	 * @return	true si el objeto rebota, false si no
+	 */
+	public abstract boolean isBota();
 	
 	/** Comprueba si el objeto incluye a un punto dado
 	 * @param punto	Punto a chequear

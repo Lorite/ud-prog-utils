@@ -316,6 +316,11 @@ public class Nave extends ObjetoMovil {
 	}
 
 	@Override
+	public boolean isBota() {
+		return true;
+	}
+	
+	@Override
 	public String toString() {
 		return String.format( "nave %1s (%2$7.2f,%3$7.2f) Vel.=(%4$6.3f,%5$6.3f)", nombre, x, y, velocidadX, velocidadY );
 	}

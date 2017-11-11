@@ -145,6 +145,11 @@ public class Asteroide extends ObjetoMovil {
 		double dist = punto.distance( x, y );
 		return dist <= radio;
 	}
+	
+	@Override
+	public boolean isBota() {
+		return false;
+	}
 
 	@Override
 	public String toString() {

@@ -35,6 +35,7 @@ public class MundoNaves {
 	
 
 	public static void main(String[] args) {
+		Fisica.setGravedad( false );
 		crearYMoverMundo();
 	}
 	

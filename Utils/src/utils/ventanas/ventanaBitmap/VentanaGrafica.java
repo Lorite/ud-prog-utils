@@ -629,4 +629,18 @@ public void anyadeBoton( String texto, ActionListener evento ) {
 		v.acaba();
 	}
 	
+	/** Añade un escuchador al cambio de tamaño del panel de dibujado de la ventana
+	 * @param l	Escuchador de cambio de tamaño a añadir
+	 */
+	public void addComponentListener( ComponentListener l ) {
+		panel.addComponentListener( l );
+	}
+	
+	/** Elimina un escuchador de cambio de tamaño del panel de dibujado de la ventana
+	 * @param l	Escuchador de cambio de tamaño a eliminar
+	 */
+	public void removeComponentListener( ComponentListener l ) {
+		panel.removeComponentListener( l );
+	}
+	
 }

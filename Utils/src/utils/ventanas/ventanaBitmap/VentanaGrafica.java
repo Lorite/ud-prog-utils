@@ -2,12 +2,10 @@ package utils.ventanas.ventanaBitmap;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /** Clase ventana sencilla para dibujado
  */
@@ -77,6 +75,9 @@ public class VentanaGrafica {
 		panel.addMouseMotionListener( new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
+				synchronized (lock) {
+					pointMoved = e.getPoint();
+				}
 			}
 			@Override
 			public void mouseDragged(MouseEvent e) {
@@ -203,6 +204,24 @@ public class VentanaGrafica {
 	public void dibujaRect( double x, double y, double anchura, double altura, float grosor, Color color ) {
 		graphics.setColor( color );
 		graphics.setStroke( new BasicStroke( grosor ));
+		graphics.drawRect( (int)Math.round(x), (int)Math.round(y), (int)Math.round(anchura), (int)Math.round(altura) );
+		if (dibujadoInmediato) panel.repaint();
+	}
+	
+	/** Dibuja un rectángulo relleno en la ventana
+	 * @param x	Coordenada x de la esquina superior izquierda del rectángulo
+	 * @param y	Coordenada y de la esquina superior izquierda del rectángulo
+	 * @param anchura	Anchura del rectángulo (en píxels) 
+	 * @param altura	Altura del rectángulo (en píxels)
+	 * @param grosor	Grueso del rectángulo (en píxels)
+	 * @param color  	Color de la línea del rectángulo
+	 * @param colorRell	Color del relleno del rectángulo
+	 */
+	public void dibujaRect( double x, double y, double anchura, double altura, float grosor, Color color, Color colorRell ) {
+		graphics.setColor( colorRell );
+		graphics.setStroke( new BasicStroke( grosor ));
+		graphics.fillRect( (int)Math.round(x), (int)Math.round(y), (int)Math.round(anchura), (int)Math.round(altura) );
+		graphics.setColor( color );
 		graphics.drawRect( (int)Math.round(x), (int)Math.round(y), (int)Math.round(anchura), (int)Math.round(altura) );
 		if (dibujadoInmediato) panel.repaint();
 	}
@@ -375,25 +394,19 @@ public class VentanaGrafica {
 		dibujaFlecha( x, y, x2, y2, grosor, Color.white );
 	}
 	
-	
-	
-	
-	
-	
-	
 	/** Dibuja un polígono en la ventana
 	 * @param grosor	Grueso de la línea (en píxels)
 	 * @param color  	Color de la línea
 	 * @param cerrado	true si el polígono se cierra (último punto con el primero), false en caso contrario
 	 * @param punto		Puntos a dibujar (cada punto se enlaza con el siguiente)
 	 */
-	public void dibujaPoligono( float grosor, Color color, boolean cerrado, Point... punto ) {
+	public void dibujaPoligono( float grosor, Color color, boolean cerrado, Point2D... punto ) {
 		graphics.setColor( color );
 		graphics.setStroke( new BasicStroke( grosor ));
 		if (punto.length<2) return;
-		Point puntoIni = punto[0];
-		Point puntoAnt = punto[0];
-		Point pto = null;
+		Point2D puntoIni = punto[0];
+		Point2D puntoAnt = punto[0];
+		Point2D pto = null;
 		int numPto = 1;
 		do {
 			pto = punto[numPto];
@@ -412,24 +425,28 @@ public class VentanaGrafica {
 	 * @param cerrado	true si el polígono se cierra (último punto con el primero), false en caso contrario
 	 * @param punto		Puntos a borrar (cada punto se enlaza con el siguiente)
 	 */
-	public void borraPoligono( float grosor, boolean cerrado, Point... punto ) {
+	public void borraPoligono( float grosor, boolean cerrado, Point2D... punto ) {
 		dibujaPoligono( grosor, Color.white, cerrado, punto );
 	}
 
-
+	/** Dibuja un texto en la ventana
+	 * @param x	Coordenada x de la esquina superior izquierda del rectángulo
+	 * @param y	Coordenada y de la esquina superior izquierda del rectángulo
+	 * @param texto	Texto a dibujar 
+	 * @param font	Tipo de letra con el que dibujar el texto
+	 * @param color	Color del texto
+	 */
+	public void dibujaTexto( double x, double y, String texto, Font font, Color color ) {
+		graphics.setColor( color );
+		graphics.setFont( font );
+		graphics.drawString( texto, (int)Math.round(x), (int)Math.round(y) );
+		if (dibujadoInmediato) panel.repaint();
+	}
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-
 	/** Devuelve el objeto de gráfico sobre el que pintar, correspondiente al 
 	 * panel principal de la ventana. Después de actualizar graphics hay que llamar a {@link #repaint()}
 	 * si se quiere que se visualice en pantalla
@@ -578,11 +595,37 @@ public class VentanaGrafica {
 		dibujaImagen( recursoGrafico, centroX, centroY, ii.getIconWidth(), ii.getIconHeight(), zoom, radsRotacion, opacity);
 	}
 	
+	private transient JPanel pBotonera = null;
+/** Añade un botón de acción a la botonera superior
+ * @param texto	Texto del botón
+ * @param evento	Evento a lanzar en la pulsación del botón
+ */
+public void anyadeBoton( String texto, ActionListener evento ) {
+	JButton b = new JButton( texto );
+	if (pBotonera==null) {
+		pBotonera = new JPanel();
+		pBotonera.add( b );
+		ventana.getContentPane().add( pBotonera, BorderLayout.NORTH );
+		ventana.revalidate();
+	} else {
+		pBotonera.add( b );
+		pBotonera.revalidate();
+	}
+	b.addActionListener( evento );
+}
+
+	
 	/** Método main de prueba de la clase
 	 * @param args	No utilizado
 	 */
 	public static void main(String[] args) {
 		VentanaGrafica v = new VentanaGrafica( 600, 480, "Test Ventana Gráfica" );
+		v.anyadeBoton( "Pon dibujado inmediato", new ActionListener() {  // Para ver cómo se ve con flickering si se dibujan cosas una a una
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				v.setDibujadoInmediato( true );
+			}
+		});
 		v.setDibujadoInmediato( false );
 		for (int i=0; i<=200; i++) {
 			v.borra();
@@ -600,6 +643,20 @@ public class VentanaGrafica {
 		}
 		v.espera( 5000 );
 		v.acaba();
+	}
+	
+	/** Añade un escuchador al cambio de tamaño del panel de dibujado de la ventana
+	 * @param l	Escuchador de cambio de tamaño a añadir
+	 */
+	public void addComponentListener( ComponentListener l ) {
+		panel.addComponentListener( l );
+	}
+	
+	/** Elimina un escuchador de cambio de tamaño del panel de dibujado de la ventana
+	 * @param l	Escuchador de cambio de tamaño a eliminar
+	 */
+	public void removeComponentListener( ComponentListener l ) {
+		panel.removeComponentListener( l );
 	}
 	
 }

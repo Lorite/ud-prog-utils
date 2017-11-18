@@ -208,6 +208,24 @@ public class VentanaGrafica {
 		if (dibujadoInmediato) panel.repaint();
 	}
 	
+	/** Dibuja un rectángulo relleno en la ventana
+	 * @param x	Coordenada x de la esquina superior izquierda del rectángulo
+	 * @param y	Coordenada y de la esquina superior izquierda del rectángulo
+	 * @param anchura	Anchura del rectángulo (en píxels) 
+	 * @param altura	Altura del rectángulo (en píxels)
+	 * @param grosor	Grueso del rectángulo (en píxels)
+	 * @param color  	Color de la línea del rectángulo
+	 * @param colorRell	Color del relleno del rectángulo
+	 */
+	public void dibujaRect( double x, double y, double anchura, double altura, float grosor, Color color, Color colorRell ) {
+		graphics.setColor( colorRell );
+		graphics.setStroke( new BasicStroke( grosor ));
+		graphics.fillRect( (int)Math.round(x), (int)Math.round(y), (int)Math.round(anchura), (int)Math.round(altura) );
+		graphics.setColor( color );
+		graphics.drawRect( (int)Math.round(x), (int)Math.round(y), (int)Math.round(anchura), (int)Math.round(altura) );
+		if (dibujadoInmediato) panel.repaint();
+	}
+	
 	/** Dibuja un rectángulo azul en la ventana
 	 * @param x	Coordenada x de la esquina superior izquierda del rectángulo
 	 * @param y	Coordenada y de la esquina superior izquierda del rectángulo
@@ -376,12 +394,6 @@ public class VentanaGrafica {
 		dibujaFlecha( x, y, x2, y2, grosor, Color.white );
 	}
 	
-	
-	
-	
-	
-	
-	
 	/** Dibuja un polígono en la ventana
 	 * @param grosor	Grueso de la línea (en píxels)
 	 * @param color  	Color de la línea
@@ -417,20 +429,24 @@ public class VentanaGrafica {
 		dibujaPoligono( grosor, Color.white, cerrado, punto );
 	}
 
-
+	/** Dibuja un texto en la ventana
+	 * @param x	Coordenada x de la esquina superior izquierda del rectángulo
+	 * @param y	Coordenada y de la esquina superior izquierda del rectángulo
+	 * @param texto	Texto a dibujar 
+	 * @param font	Tipo de letra con el que dibujar el texto
+	 * @param color	Color del texto
+	 */
+	public void dibujaTexto( double x, double y, String texto, Font font, Color color ) {
+		graphics.setColor( color );
+		graphics.setFont( font );
+		graphics.drawString( texto, (int)Math.round(x), (int)Math.round(y) );
+		if (dibujadoInmediato) panel.repaint();
+	}
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-
 	/** Devuelve el objeto de gráfico sobre el que pintar, correspondiente al 
 	 * panel principal de la ventana. Después de actualizar graphics hay que llamar a {@link #repaint()}
 	 * si se quiere que se visualice en pantalla

@@ -105,7 +105,6 @@ public class MundoNaves {
 		private static Random random = new Random();
 		public static int cont = 0;
 
-		// TAREA 1
 		private transient NaveTripulada navePrincipal = null;
 		private transient Runnable run = null;
 		private transient int tipoInit = 0;
@@ -358,37 +357,14 @@ public class MundoNaves {
 	// Se ejecuta en cada choque y recibe los objetos que chocan
 	private void procesaChoque( ObjetoMovil objeto, ObjetoMovil objeto2 ) {
 		double milis = MILIS_POR_MOVIMIENTO;
-//TODO Hacer bien el tema de los choques con aproximaciones sucesivas
-//		if (objeto instanceof Nave && objeto2 instanceof Nave) {
-//			Nave nave = (Nave) objeto;
-//			Nave nave2 = (Nave) objeto2;
-//			nave.dibuja( ventana );
-//			nave2.dibuja( ventana );
-//			nave.deshazUltimoMovimiento( ventana );
-//			nave2.deshazUltimoMovimiento( ventana );
-//			double milisChoque = calcularChoqueExacto( 0, ventana, nave, nave2, MILIS_POR_MOVIMIENTO );
-//			milis = milis - milisChoque ;
-//			nave.dibuja( ventana );
-//			nave2.dibuja( ventana );
-//			nave.mueveUnPoco( ventana, milis, false );
-//			nave2.mueveUnPoco( ventana, milis, false );
-//		}
 		// Aplica velocidad de choque en función de las masas (el que tiene masa más grande se ve menos afectado y viceversa)
 		Fisica.calcChoqueEntreObjetos(ventana, objeto, objeto2, milis, VER_CHOQUES );
-//TODO Aproximaciones sucesivas
-//		if (objeto instanceof Nave && objeto2 instanceof Nave) {
-//			Nave nave = (Nave) objeto;
-//			Nave nave2 = (Nave) objeto2;
-//			nave.deshazUltimoMovimiento( ventana );
-//			nave2.deshazUltimoMovimiento( ventana );
-//		}
 		if (VER_CHOQUES) {  // Espera a pulsación de ratón
 			if (ventana.getRatonPulsado()==null) { // Si el ratón no está pulsado...
 				while (ventana.getRatonPulsado()==null && !ventana.estaCerrada()) {}  // Espera a pulsación...
 				while (ventana.getRatonPulsado()!=null && !ventana.estaCerrada()) {}  // ...y suelta
 			}
 		}
-		// TAREA 1
 		if (objeto==navePrincipal || objeto2==navePrincipal) {
 			ObjetoMovil chocado = objeto;
 			if (objeto==navePrincipal) chocado = objeto2;
@@ -424,20 +400,5 @@ public class MundoNaves {
 		// TODO
 	}
 
-	// TODO Aproximaciones sucesivas
-	@SuppressWarnings("unused")
-	private double calcularChoqueExacto( int numLlamadas, VentanaGrafica ventana, Nave nave, Nave nave2, double milisMovimiento ) {
-		if (numLlamadas>=5) return 0; // Caso base
-		double milisMitad = milisMovimiento / 2;
-		nave.mueveUnPoco( ventana, milisMitad, false );
-		nave2.mueveUnPoco( ventana, milisMitad, false );
-		if (nave.chocaConObjeto( nave2 )==null) {   // Ahora no chocan. Validamos el movimiento y probamos con la mitad siguiente
-			return milisMitad + calcularChoqueExacto( numLlamadas+1, ventana, nave, nave2, milisMitad );
-		} else {  // Ahora sí chocan. Anulamos el movimiento y nos vamos hacia la mitad anterior
-			nave.deshazUltimoMovimiento( ventana );
-			nave2.deshazUltimoMovimiento( ventana );
-			return calcularChoqueExacto( numLlamadas+1, ventana, nave, nave2, milisMitad );
-		}
-	}
 	
 }

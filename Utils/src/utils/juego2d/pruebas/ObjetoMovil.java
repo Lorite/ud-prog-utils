@@ -2,7 +2,6 @@ package utils.juego2d.pruebas;
 
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import utils.juego2d.utils.Fisica;
 import utils.juego2d.utils.PolarPoint;
@@ -201,6 +200,7 @@ public abstract class ObjetoMovil {
 	 * @param dibujar	true si se quiere borrar y dibujar el objeto en la ventana, false si se hace aparte
 	 */
 	public void mueveUnPocoX( VentanaGrafica v, double miliSgs, boolean dibujar ) {
+		if (isFijo()) return; // Si el objeto es fijo no se mueve
 		// 1. Cálculos previos
 		velXInicial = velocidadX;
 		antX = x;
@@ -224,6 +224,7 @@ public abstract class ObjetoMovil {
 	 * @param aceleracion	Aceleración adicional a la gravedad a aplicar al objeto (si procede). Si es null, no se considera
 	 */
 	public void mueveUnPoco( VentanaGrafica v, double miliSgs, boolean dibujar, Point2D aceleracion ) {
+		if (isFijo()) return; // Si el objeto es fijo no se mueve
 		// 1. Cálculos previos
 		Point2D miAceleracion = (aceleracion==null) 
 			? new Point2D.Double( 0.0, Fisica.getGravedad() ) 
@@ -332,7 +333,12 @@ public abstract class ObjetoMovil {
 	 * @param objeto2	Objeto con el que probar el choque
 	 * @return	Devuelve null si no chocan, un vector con forma de punto indicando el ángulo y amplitud del choque sobre el objeto en curso
 	 */
-	public abstract Point chocaConObjeto( ObjetoMovil objeto2 );
+	public abstract Point2D chocaConObjeto( ObjetoMovil objeto2 );
+	
+	/** Indica si el objeto esFijo
+	 * @return	true si el objeto es fijo, false si no
+	 */
+	public abstract boolean isFijo();
 	
 	/** Indica si el objeto rebota
 	 * @return	true si el objeto rebota, false si no
@@ -343,6 +349,6 @@ public abstract class ObjetoMovil {
 	 * @param punto	Punto a chequear
 	 * @return	true si el punto está dentro del objeto, false en caso contrario
 	 */
-	public abstract boolean contieneA( Point punto );
+	public abstract boolean contieneA( Point2D punto );
 
 }

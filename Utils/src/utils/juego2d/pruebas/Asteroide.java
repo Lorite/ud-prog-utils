@@ -1,5 +1,6 @@
 package utils.juego2d.pruebas;
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 import utils.ventanas.ventanaBitmap.VentanaGrafica;
 
@@ -119,10 +120,10 @@ public class Asteroide extends ObjetoMovil {
 	 * 			(0,0) si el bloque 2 incluye al bloque 1
 	 */
 	@Override
-	public Point chocaConObjeto( ObjetoMovil objeto2 ) {
+	public Point2D chocaConObjeto( ObjetoMovil objeto2 ) {
 		if (objeto2 instanceof Asteroide) {
 			Asteroide pelota2 = (Asteroide) objeto2;
-			Point p = new Point();
+			Point2D p = new Point2D.Double();
 			p.setLocation( pelota2.x - x, pelota2.y - y );
 			double dist = p.distance(0,0);
 			double moduloChoque = radio + pelota2.radio - dist;
@@ -141,7 +142,7 @@ public class Asteroide extends ObjetoMovil {
 	 * @return	true si el punto está dentro del bloque, false en caso contrario
 	 */
 	@Override
-	public boolean contieneA( Point punto ) {
+	public boolean contieneA( Point2D punto ) {
 		double dist = punto.distance( x, y );
 		return dist <= radio;
 	}
@@ -151,6 +152,11 @@ public class Asteroide extends ObjetoMovil {
 		return false;
 	}
 
+	@Override
+	public boolean isFijo() {
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format( "Asteroide %1s (%2$7.2f,%3$7.2f) R=%4$5.1f Vel.=(%5$6.3f,%6$6.3f)", nombre, x, y, radio, velocidadX, velocidadY );

@@ -1,6 +1,6 @@
 package utils.juego2d.pruebas;
 import java.awt.Color;
-import java.awt.Point;
+import java.awt.geom.Point2D;
 
 import utils.juego2d.utils.Fisica;
 import utils.ventanas.ventanaBitmap.VentanaGrafica;
@@ -11,6 +11,7 @@ import utils.ventanas.ventanaBitmap.VentanaGrafica;
  */
 public class Pelota extends ObjetoMovil {
 	private double radio;  // Radio de pelota
+	private boolean bota;
 	
 	/** Constructor de pelota por defecto: nombre vacío, centro (0,0), radio 10, color azul, bota true
 	 */
@@ -28,6 +29,7 @@ public class Pelota extends ObjetoMovil {
 	public Pelota(double x, double y, double radio, Color color, boolean bota) {
 		super( x, y, color );
 		this.radio = radio;
+		this.bota = bota;
 	}
 	
 	/** Constructor de pelota con datos mínimos, suponiendo color azul y bota = true
@@ -158,18 +160,22 @@ public class Pelota extends ObjetoMovil {
 	 * @return	Devuelve null si no chocan, un vector con forma de punto indicando el ángulo y amplitud del choque sobre la pelota en curso
 	 */
 	@Override
-	public Point chocaConObjeto( ObjetoMovil objeto2 ) {
+	public Point2D chocaConObjeto( ObjetoMovil objeto2 ) {
 		if (objeto2 instanceof Pelota) {
 			Pelota pelota2 = (Pelota) objeto2;
-			Point p = new Point();
-			p.setLocation( pelota2.x - x, pelota2.y - y );
+			Point2D p = new Point2D.Double( pelota2.x - x, pelota2.y - y );
 			double dist = p.distance(0,0);
 			double moduloChoque = radio + pelota2.radio - dist;
 			if (moduloChoque < 0) return null;
 			p.setLocation( p.getX() * moduloChoque / dist, p.getY() * moduloChoque / dist );
 			return p;
-		} else if (objeto2 instanceof Bloque) {
-			Point choca = objeto2.chocaConObjeto( this );
+		} else if (objeto2 instanceof Bloque) {  // El cálculo de choque con bloque lo gestiona el bloque
+			Point2D choca = objeto2.chocaConObjeto( this );
+			if (choca!=null)
+				choca.setLocation( -choca.getX(), -choca.getY() );
+			return choca;
+		} else if (objeto2 instanceof UDcito) {  // Todo el cálculo de choque con UDcito lo gestiona él
+			Point2D choca = objeto2.chocaConObjeto( this );
 			if (choca!=null)
 				choca.setLocation( -choca.getX(), -choca.getY() );
 			return choca;
@@ -183,14 +189,19 @@ public class Pelota extends ObjetoMovil {
 	 * @return	true si el punto está dentro de la pelota, false en caso contrario
 	 */
 	@Override
-	public boolean contieneA( Point punto ) {
+	public boolean contieneA( Point2D punto ) {
 		double dist = punto.distance( x, y );
 		return dist <= radio;
 	}
 
 	@Override
 	public boolean isBota() {
-		return true;
+		return bota;
+	}
+	
+	@Override
+	public boolean isFijo() {
+		return false;
 	}
 	
 	@Override

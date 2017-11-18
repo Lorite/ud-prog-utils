@@ -1,6 +1,6 @@
 package utils.juego2d.pruebas;
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 import utils.juego2d.utils.Fisica;
 import utils.juego2d.utils.PolarPoint;
@@ -158,10 +158,10 @@ public class Bloque extends ObjetoMovil {
 	 * 			(0,0) si el bloque 2 incluye al bloque 1
 	 */
 	@Override
-	public Point chocaConObjeto( ObjetoMovil objeto2 ) {
+	public Point2D chocaConObjeto( ObjetoMovil objeto2 ) {
 		if (objeto2 instanceof Bloque) {
 			Bloque bloque2 = (Bloque) objeto2;
-			Point p = new Point();
+			Point2D p = new Point2D.Double();
 			if (bloque2.x > x+anchura) {
 				return null;
 			} else {
@@ -232,102 +232,92 @@ public class Bloque extends ObjetoMovil {
 			}
 		} else if (objeto2 instanceof Pelota) {
 			Pelota pelota = (Pelota) objeto2;
-			Point p = new Point();
+			Point2D p = new Point2D.Double();
 			int cuadrante = cuadrante( pelota.x, pelota.y );
 			if (cuadrante==1) {  // 1. Cuadrante izquierdo
-				double origenX = x + altura/2.0;
-				double origenY = y + altura/2.0;
-				p.setLocation(pelota.x - origenX, pelota.y - origenY);  // Vector de origen a centro pelota
+				if (pelota.x+pelota.getRadio()<x) return null;
+				p.setLocation( pelota.x + pelota.getRadio() - x, 0.0 );  // Vector de choque horizontal hacia la izquierda (x positiva)
+			} else if (cuadrante==2) {  // 2. Cuadrante derecho
+				if (pelota.x-pelota.getRadio()>x+anchura) return null;
+				p.setLocation( pelota.x - pelota.getRadio() - x - anchura, 0.0 );  // Vector de choque horizontal hacia la izquierda (x negativa)
+			} else if (cuadrante==3) {  // 3. Cuadrante arriba
+				if (pelota.y+pelota.getRadio()<y) return null;
+				p.setLocation( 0.0, pelota.y + pelota.getRadio() - y );  // Vector de choque vertical hacia arriba (y positiva)
+			} else if (cuadrante==4) {  // 4. Cuadrante abajo
+				if (pelota.y-pelota.getRadio()>y+altura) return null;
+				p.setLocation( 0.0, pelota.y - pelota.getRadio() - y - altura );  // Vector de choque vertical hacia abajo (y negativa)
+			} else if (cuadrante==5) {  // 5. Cuadrante izquierdo superior
+				p.setLocation(x - pelota.x, y - pelota.y);  // Vector de centro pelota a esquina bloque
 				PolarPoint pp = PolarPoint.pointToPolar( p );
-				pp.setModulo( pp.getModulo() - pelota.getRadio() );  // Vector de origen al punto más cercano de la esfera
-				double moduloABorde = pp.getModuloParaX( altura/2.0 );
-				if (moduloABorde < pp.getModulo())  // no hay choque
-					return null;
-				else {  // Sí hay choque
-					pp.setModulo( moduloABorde - pp.getModulo() );
-					p.setLocation( pp.getX(), pp.getY() );
-				}
-			} else if (cuadrante==2) {  // 2. Test cuadrante derecho
-				double origenX = x + anchura - altura/2.0;
-				double origenY = y + altura/2.0;
-				p.setLocation(pelota.x - origenX, pelota.y - origenY);  // Vector de origen a centro pelota
+				if (pp.getModulo()>pelota.getRadio() && !centroDentro(pelota)) return null; // No hay choque
+				double moduloVector = pelota.getRadio() - pp.getModulo();
+				if (centroDentro(pelota)) { moduloVector = pelota.getRadio() + pp.getModulo(); pp.setArgumento( pp.getArgumento()+Math.PI ); }// Centro de pelota dentro de bloque
+				pp.setModulo( moduloVector );
+				p.setLocation( pp.getX(), pp.getY() );
+			} else if (cuadrante==6) {  // 5. Cuadrante derecho superior
+				p.setLocation(x+anchura - pelota.x, y - pelota.y);  // Vector de centro pelota a esquina bloque
 				PolarPoint pp = PolarPoint.pointToPolar( p );
-				pp.setModulo( pp.getModulo() - pelota.getRadio() );  // Vector de origen al punto más cercano de la esfera
-				double moduloABorde = pp.getModuloParaX( altura/2.0 );
-				if (moduloABorde < pp.getModulo())  // no hay choque
-					return null;
-				else {  // Sí hay choque
-					pp.setModulo( moduloABorde - pp.getModulo() );
-					p.setLocation( pp.getX(), pp.getY() );
-				}
-			} else if (cuadrante==3) {  // 3. Test cuadrante superior
-				double origenX = x + anchura/2.0;
-				double origenY = y + anchura/2.0;
-				p.setLocation(pelota.x - origenX, pelota.y - origenY);  // Vector de origen a centro pelota
+				if (pp.getModulo()>pelota.getRadio() && !centroDentro(pelota)) return null; // No hay choque
+				double moduloVector = pelota.getRadio() - pp.getModulo();
+				if (centroDentro(pelota)) { moduloVector = pelota.getRadio() + pp.getModulo(); pp.setArgumento( pp.getArgumento()+Math.PI ); }// Centro de pelota dentro de bloque
+				pp.setModulo( moduloVector );
+				p.setLocation( pp.getX(), pp.getY() );
+			} else if (cuadrante==7) {  // 7. Cuadrante izquierdo superior
+				p.setLocation(x - pelota.x, y+altura - pelota.y);  // Vector de centro pelota a esquina bloque
 				PolarPoint pp = PolarPoint.pointToPolar( p );
-				pp.setModulo( pp.getModulo() - pelota.getRadio() );  // Vector de origen al punto más cercano de la esfera
-				double moduloABorde = pp.getModuloParaY( anchura/2.0 );
-				if (moduloABorde < pp.getModulo())  // no hay choque
-					return null;
-				else {  // Sí hay choque
-					pp.setModulo( moduloABorde - pp.getModulo() );
-					p.setLocation( pp.getX(), pp.getY() );
-				}
-			} else if (cuadrante==4) {  // 4. Test cuadrante inferior
-				double origenX = x + altura - anchura/2.0;
-				double origenY = y + anchura/2.0;
-				p.setLocation(pelota.x - origenX, pelota.y - origenY);  // Vector de origen a centro pelota
+				if (pp.getModulo()>pelota.getRadio() && !centroDentro(pelota)) return null; // No hay choque
+				double moduloVector = pelota.getRadio() - pp.getModulo();
+				if (centroDentro(pelota)) { moduloVector = pelota.getRadio() + pp.getModulo(); pp.setArgumento( pp.getArgumento()+Math.PI ); }// Centro de pelota dentro de bloque
+				pp.setModulo( moduloVector );
+				p.setLocation( pp.getX(), pp.getY() );
+			} else if (cuadrante==8) {  // 8. Cuadrante derecho superior
+				p.setLocation(x+anchura - pelota.x, y+altura - pelota.y);  // Vector de centro pelota a esquina bloque
 				PolarPoint pp = PolarPoint.pointToPolar( p );
-				pp.setModulo( pp.getModulo() - pelota.getRadio() );  // Vector de origen al punto más cercano de la esfera
-				double moduloABorde = pp.getModuloParaX( anchura/2.0 );
-				if (moduloABorde < pp.getModulo())  // no hay choque
-					return null;
-				else {  // Sí hay choque
-					pp.setModulo( moduloABorde - pp.getModulo() );
-					p.setLocation( pp.getX(), pp.getY() );
-				}
-			} else {  // 5.- Nunca debería no estar en ningún cuadrante
+				if (pp.getModulo()>pelota.getRadio() && !centroDentro(pelota)) return null; // No hay choque
+				double moduloVector = pelota.getRadio() - pp.getModulo();
+				if (centroDentro(pelota)) { moduloVector = pelota.getRadio() + pp.getModulo(); pp.setArgumento( pp.getArgumento()+Math.PI ); }// Centro de pelota dentro de bloque
+				pp.setModulo( moduloVector );
+				p.setLocation( pp.getX(), pp.getY() );
+			} else {  // Nunca debería no estar en ningún cuadrante salvo que estén centradas
 				return null;
 			}
 			return p;
+		} else if (objeto2 instanceof UDcito) {  // Todo el cálculo de choque con UDcito lo gestiona él
+			Point2D choca = objeto2.chocaConObjeto( this );
+			if (choca!=null) choca.setLocation( -choca.getX(), -choca.getY() );
+			return choca;
 		} else {
 			// Si fueran otros tipos de objetos no hay choque
 			return null;
 		}
 	}
-	
-		// Devuelve el cuadrante donde está (1-izquierda, 2-derecha, 3-arriba, 4-abajo)
+		// Informa si el centro de la pelota está dentro del bloque
+		private boolean centroDentro( Pelota p ) {
+			return (p.x>=x && p.x<=x+anchura && p.y>=y && p.y<=y+altura);
+		}
+		// Devuelve el cuadrante donde está (1-izquierda, 2-derecha, 3-arriba, 4-abajo, 5-arr+izq, 6-arr+der, 7-abj+izq, 8-abj+der)
 		private int cuadrante( double xPelota, double yPelota ) {
-			int cuad = 0;
-			double yIzquierdaDesde = y + (xPelota - x);  // 1. Test cuadrante izquierdo
-			double yIzquierdaHasta = y + altura - (xPelota - x);
-			if (yPelota >= yIzquierdaDesde && yPelota <= yIzquierdaHasta) {
-				cuad = 1;
-			}
-			double yDerechaDesde = y + (xPelota - x - anchura);  // 2. Test cuadrante derecho
-			double yDerechaHasta = y + altura - (xPelota - x - anchura);
-			if (yPelota >= yDerechaDesde && yPelota <= yDerechaHasta) {
-				if (cuad==1) {  //  Puede ser lo mismo izquierda que derecha... ver cuál está más cerca
-					if (xPelota > x+anchura/2.0) cuad = 2;
+			if (yPelota<y) {
+				if (xPelota<x) return 5;
+				if (xPelota>x+anchura) return 6;
+				return 3;
+			} else if (yPelota>y+altura) {
+				if (xPelota<x) return 7;
+				if (xPelota>x+anchura) return 8;
+				return 4;
+			} else {
+				if (xPelota<x) return 1;
+				if (xPelota>x+anchura) return 2;
+				if (yPelota<y+altura/2) {
+					if (xPelota<x) return 5;
+					if (xPelota>x+anchura) return 6;
+					return 3;
 				} else {
-					cuad = 2;
-				}
-			} 
-			double xSupDesde = x + (yPelota - y);  // 3. Test cuadrante superior
-			double xSupHasta = x + altura - (yPelota - y);
-			if (xPelota >= xSupDesde && xPelota <= xSupHasta) {
-				cuad = 3;
-			} 
-			double xInfDesde = x + (yPelota - y - altura);  // 4. Test cuadrante inferior
-			double xInfHasta = x + anchura - (yPelota - y - altura);
-			if (xPelota >= xInfDesde && xPelota <= xInfHasta) {
-				if (cuad==3) {  //  Puede ser lo mismo izquierda que derecha... ver cuál está más cerca
-					if (yPelota > y+altura/2.0) cuad = 4;
-				} else {
-					cuad = 4;
+					if (xPelota<x) return 7;
+					if (xPelota>x+anchura) return 8;
+					return 4;
 				}
 			}
-			return cuad;
 		}
 	
 	/** Comprueba si el bloque incluye a un punto dado
@@ -335,13 +325,18 @@ public class Bloque extends ObjetoMovil {
 	 * @return	true si el punto está dentro del bloque, false en caso contrario
 	 */
 	@Override
-	public boolean contieneA( Point punto ) {
-		return punto.x >= x && punto.y >= y && punto.x<=x+anchura && punto.y<=y+altura;
+	public boolean contieneA( Point2D punto ) {
+		return punto.getX() >= x && punto.getY() >= y && punto.getX()<=x+anchura && punto.getY()<=y+altura;
 	}
 
 	@Override
 	public boolean isBota() {
 		return false;
+	}
+	
+	@Override
+	public boolean isFijo() {
+		return true;
 	}
 	
 	@Override

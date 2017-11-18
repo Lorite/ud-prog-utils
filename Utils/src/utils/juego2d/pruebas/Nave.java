@@ -277,7 +277,7 @@ public class Nave extends ObjetoMovil {
 	 * @return	Devuelve null si no chocan, un vector con forma de punto indicando el ángulo y amplitud del choque sobre la nave en curso
 	 */
 	@Override
-	public Point chocaConObjeto( ObjetoMovil objeto2 ) {
+	public Point2D chocaConObjeto( ObjetoMovil objeto2 ) {
 		if (objeto2 instanceof Nave) {
 			Point2D[] puntos2 = ((Nave)objeto2).puntos;
 			Path2D.Double shape1 = new Path2D.Double(); shape1.moveTo( puntos[0].getX(), puntos[0].getY() );
@@ -295,8 +295,7 @@ public class Nave extends ObjetoMovil {
 				return null;
 			else {
 				Rectangle r = area1.getBounds();
-				Point p = new Point();
-				p.setLocation( r.getWidth(), r.getHeight() );
+				Point2D p = new Point.Double( r.getWidth(), r.getHeight() );
 				return p;
 			}
 		} else {
@@ -309,7 +308,7 @@ public class Nave extends ObjetoMovil {
 	 * @return	true si el punto está dentro de la nave, false en caso contrario
 	 */
 	@Override
-	public boolean contieneA( Point punto ) {
+	public boolean contieneA( Point2D punto ) {
 		double radio = tamanyo / Math.sqrt(3.0);
 		double dist = punto.distance( x, y );
 		return dist <= radio;
@@ -318,6 +317,11 @@ public class Nave extends ObjetoMovil {
 	@Override
 	public boolean isBota() {
 		return true;
+	}
+	
+	@Override
+	public boolean isFijo() {
+		return false;
 	}
 	
 	@Override

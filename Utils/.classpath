@@ -3,6 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/desarrollo/libs/htmlparser1_6/htmllexer.jar"/>
-	<classpathentry kind="lib" path="D:/desarrollo/libs/vlcj-3.10.1/vlcj-3.10.1.jar"/>
+	<classpathentry kind="lib" path="D:/desarrollo/libs/vlcj-3.10.1/vlcj-3.10.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/desarrollo/libs/vlcj-3.10.1/vlcj-3.10.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

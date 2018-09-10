@@ -684,5 +684,20 @@ public void anyadeBoton( String texto, ActionListener evento ) {
 	public void removeComponentListener( ComponentListener l ) {
 		panel.removeComponentListener( l );
 	}
+
+	/** Añade un escuchador de ventana a la ventana
+	 * @param l	Escuchador a añadir
+	 */
+	public void addWindowListener( WindowListener l ) {
+		ventana.addWindowListener( l );
+	}
+	
+	/** Elimina un escuchador de ventana de la ventana
+	 * @param l	Escuchador a eliminar
+	 */
+	public void removeWindowListener( WindowListener l ) {
+		ventana.removeWindowListener( l );
+	}
+	
 	
 }

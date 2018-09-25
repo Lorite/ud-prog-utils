@@ -33,7 +33,7 @@ import utils.ventanas.ventanaConsola.VentanaColorConsola;
 * 
 */
 public class ScrapWeb {
-
+	// C1
 	private static boolean MOSTRAR_TODOS_LOS_TAGS = false;
 	public static void main(String[] args) {
 		// Pasos a dar para procesar una web de forma automática.

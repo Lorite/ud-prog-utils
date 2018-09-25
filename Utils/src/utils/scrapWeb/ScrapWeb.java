@@ -22,7 +22,7 @@ import utils.ventanas.ventanaConsola.VentanaColorConsola;
 
 /** 
 * Clase de scrapping de una página web para procesar su contenido
-* Programación II y III - IEIAII
+* Programación II y III
 * 
 * Utiliza la librería externa htmlparser 1.6 
 * Descargada en feb de 2016 de  https://sourceforge.net/projects/htmlparser/files/htmlparser/1.6/htmlparser1_6_20060610.zip

@@ -329,10 +329,10 @@ public class ScrapWeb {
 		URL url;
 		pilaTags = new LinkedList<>();
 		try {
-			url = new URL( dirWeb );
-			URLConnection connection = url.openConnection();
-			connection.addRequestProperty("User-Agent", "Mozilla/4.0");  // Hace pensar a la web que somos un navegador
-			Lexer mLexer =  new Lexer (new Page (connection));
+			ConnectionManager manager = Page.getConnectionManager();
+			manager.getRequestProperties().put( "User-Agent", "Mozilla/4.0" );  // Hace pensar a la web que somos un navegador
+			URLConnection connection = manager.openConnection( dirWeb );
+			Lexer mLexer =  new Lexer( connection );
 			Node n = mLexer.nextNode();
 			while (n!=null) {
 				if (n instanceof Tag) {

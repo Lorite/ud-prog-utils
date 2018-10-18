@@ -12,6 +12,7 @@ import java.util.LinkedList;
 //Imports de librería externa  -  https://sourceforge.net/projects/htmlparser/
 import org.htmlparser.Node;
 import org.htmlparser.Tag;
+import org.htmlparser.http.ConnectionManager;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.Page;
 import org.htmlparser.nodes.TextNode;
@@ -36,6 +37,13 @@ public class ScrapWeb {
 	
 	private static boolean MOSTRAR_TODOS_LOS_TAGS = false;
 	public static void main(String[] args) {
+		// La url que quieras analizar
+		String urlAAnalizar = "https://www.tutiempo.net/clima/ws-80250.html";
+		revisaWeb( urlAAnalizar );
+		// proceso();
+	}
+	
+	private static void proceso() {
 		// Pasos a dar para procesar una web de forma automática.
 		// 1.- Analizar sus contenidos. Poner aquí la URL con la que trabajar:
 		// String urlAAnalizar = "http://www.marca.com/tag/f/0e/fernando_pacheco/estadisticas/primera/2016_17/";
@@ -252,10 +260,10 @@ public class ScrapWeb {
 		URL url;
 		pilaTags = new LinkedList<>();
 		try {
-			url = new URL( dirWeb );
-			URLConnection connection = url.openConnection();
-			connection.addRequestProperty("User-Agent", "Mozilla/4.0");  // Hace pensar a la web que somos un navegador
-			Lexer mLexer =  new Lexer (new Page (connection));
+			ConnectionManager manager = Page.getConnectionManager();
+			manager.getRequestProperties().put( "User-Agent", "Mozilla/4.0" );  // Hace pensar a la web que somos un navegador
+			URLConnection connection = manager.openConnection( dirWeb );
+			Lexer mLexer =  new Lexer( connection );
 			Node n = mLexer.nextNode();
 			while (n!=null) {
 				if (n instanceof Tag) {

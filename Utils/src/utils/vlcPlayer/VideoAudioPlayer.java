@@ -990,7 +990,7 @@ public class VideoAudioPlayer {
 		private static String path;
 	/** Ejecuta una ventana de VideoPlayer.
 	 * El path de VLC debe estar en la variable de entorno "vlc".
-	 * Comprobar que la versiÃ³n de 32/64 bits de Java y de VLC es compatible.
+	 * Comprobar que la versión de 32/64 bits de Java y de VLC es compatible.
 	 * @param args	Un array de dos strings. El primero es el nombre (con comodines) de los ficheros,
 	 * 				el segundo el path donde encontrarlos.  Si no se suministran, se piden de forma interactiva. 
 	 */
